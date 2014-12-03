@@ -1,10 +1,8 @@
 .page-header
   %h1 Change Password
 
-= simple_form_for @user, url: passwords_path, method: :post do |f|
+= simple_form_for @form, url: passwords_path, method: :post do |f|
   = f.error_notification
-  - @user.errors.full_messages.each do |msg|
-    = msg
   = f.input :original_password
   = f.input :new_password
   = f.input :new_password_confirmation

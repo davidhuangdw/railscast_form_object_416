@@ -19,17 +19,7 @@ class User < ActiveRecord::Base
     end while User.exists?(token:token)
   end
 
-  attr_accessor :changing_password, :original_password, :new_password
-  validate :verify_original_password, if: :changing_password
-  validates :new_password, length:{minimum:6}, confirmation: true, if: :changing_password
-
-  def verify_original_password
-    unless authenticate(original_password)
-      errors.add :original_password, 'is not correct.'
-    end
-  end
-  def change_password
-    @changing_password =false
+  def change_password(new_password)
     update!(password:new_password, password_confirmation:new_password)
   end
 end
