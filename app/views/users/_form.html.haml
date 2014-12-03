@@ -7,6 +7,8 @@
     = f.input :password
     = f.input :password_confirmation
     -#= f.input :subscribed_at
+    = f.simple_fields_for :profile, @user.profile do |builder|
+      = render 'profile_form', f:builder
 
   .form-actions
     = f.button :submit

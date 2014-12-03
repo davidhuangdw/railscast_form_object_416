@@ -24,6 +24,7 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+    @user.build_profile
   end
 
   # GET /users/1/edit
@@ -78,6 +79,8 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation, :username)
+      params.require(:user)
+        .permit(:email, :password, :password_confirmation, :username,
+          profile_attributes:[:twitter_name, :github_name, :bio])
     end
 end

@@ -18,3 +18,15 @@
   %dd= @user.username
   %dt Subscribed at:
   %dd= @user.subscribed_at
+
+%h4 Profile
+- @user.profile.try do |p|
+  %dl.dl-horizontal
+    %dt Twitter:
+    %dd= p.twitter_name
+    %dt Github:
+    %dd= p.github_name
+    %dt bio:
+    %dd= p.bio
+
+
