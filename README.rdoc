@@ -1,1 +1,76 @@
+### form object
+
+        # forms/password_form.rb
+        class PasswordForm
+          include ActiveModel::Naming
+          include ActiveModel::Conversion
+          include ActiveModel::Validations
+          def persisted?; false end
+          def initialize(user); @user=user end
+
+          def submit(params)
+            for k,v in params
+              send("#{k}=", v)
+            end
+            valid?.tap do |v|
+              @user.change_password(new_password) if v
+            end
+          end
+
+          attr_accessor :changing_password, :original_password, :new_password
+          validate :verify_original_password
+          validates :new_password, length:{minimum:6}, confirmation: true
+
+          def verify_original_password
+            unless @user.authenticate(original_password)
+              errors.add :original_password, 'is not correct.'
+            end
+          end
+        end
+
+        # passwords_controller.rb
+          def create
+            @form = PasswordForm.new(current_user)
+            if @form.submit(form_params)
+              redirect_to root_url, notice:'Password changed successfully.'
+            else
+              render 'new'
+            end
+          end
+          private
+          def form_params
+            params.require(:password_form).permit(:original_password, :new_password, :new_password_confirmation)
+          end
+
+### change password
+
+        validates :password, presence:true, if: :password_required?
+        # or
+        validates :password, presence:true, on: :create
+
+          attr_accessor :changing_password, :original_password, :new_password
+          validate :verify_original_password, if: :changing_password
+          validates :new_password, length:{minimum:6}, confirmation: true, if: :changing_password
+
+          def verify_original_password
+            unless authenticate(original_password)
+              errors.add :original_password, 'is not correct.'
+            end
+          end
+          def change_password
+            @changing_password =false
+            update!(password:new_password, password_confirmation:new_password)
+          end
+
+          # passwords_controller.rb
+          def create
+            @user = current_user
+            @user.changing_password = true
+            if @user.update(user_params)
+              @user.change_password
+              redirect_to root_url, notice:'Password changed successfully.'
+            else
+              render 'new'
+            end
+          end
 
