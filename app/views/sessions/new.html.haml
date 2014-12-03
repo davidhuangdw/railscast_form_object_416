@@ -1,0 +1,12 @@
+.page-header
+  %h1 Log In
+
+= form_tag sessions_path do
+  .form-group
+    = label_tag :email
+    = text_field_tag :email, params[:email], class:'form-control'
+  .form-group
+    = label_tag :password
+    = password_field_tag :password, params[:password], class:'form-control'
+  .form-group
+    = submit_tag 'Log In', class:'btn btn-primary'
